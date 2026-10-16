@@ -1,0 +1,18 @@
+# OS metadata
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Temporary files
+*.tmp
+*.log
