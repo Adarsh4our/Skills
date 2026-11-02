@@ -37,7 +37,16 @@ When resuming after interruption:
 4. Read evidence.jsonl -- understand what has been verified
 5. Read failures.jsonl -- do not retry listed approaches
 6. Resume from next_action in state.json
-7. Do NOT re-read files that state.json shows were already read and acted upon
+7. Re-read files that were targeted by a resolved failure before retrying completion.
+8. Treat a recorded read as current only while its recorded content hash matches
+   the file. Re-read after interruption/resume, model switch, failure resolution,
+   or a detected content change before mutating or claiming completion.
+
+The read-before-write guard accepts an existing file only when this session has
+a successful read record whose content hash still matches. Older path-only read
+records do not establish freshness and require a new read. See
+[EC-1.1 and EC-1.2](../../../docs/edge-cases.md#pillar-1-reconnaissance-before-mutation)
+for the matching edge-case guidance.
 
 ## Failure Log: .gravitas/sessions/<task-id>/failures.jsonl
 
@@ -47,10 +56,32 @@ Before retrying anything, check this log.
 
 ## What NOT to Do After Interruption
 
-- Do not re-read files already documented as read in state.json
+- Do not assume paths in state.json or the evidence ledger prove that files are unchanged.
+  After interruption, model switch, failure resolution, or possible external edits,
+  re-read targets before mutating or claiming completion.
 - Do not re-attempt approaches listed in failures.jsonl
 - Do not re-implement work shown complete in the evidence ledger
 - Do not start over from scratch if more than 50% of criteria are complete
+
+`gravitas resolve-failure` only permits the retry experiment; it does not
+clear the completion gate. Re-read the failed action's target after resolution
+and record fresh validator PASS evidence for any linked criteria before
+claiming completion. This is the enforcement companion to issue #57's
+recovery-documentation correction.
+
+## Anchor Upgrade (Backfill)
+
+Evidence ledgers written before user-local anchoring fail verification with
+"ledger head not anchored". On a ledger you trust, anchor its current head:
+
+```
+gravitas verify --backfill-anchors --session-dir .gravitas/sessions/<task-id>
+```
+
+Only backfill ledgers you trust — anchoring legitimizes whatever the head
+commits to. Legacy `resolved:true` failure markers without `resolution_id`
+stay unresolved by design; re-resolve them with
+`gravitas resolve-failure --session-dir … --fingerprint … --reason … --file … [--criterion-id …]`.
 
 ## Circuit Breaker
 

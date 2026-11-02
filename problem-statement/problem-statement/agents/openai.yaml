@@ -1,4 +1,0 @@
-interface:
-  display_name: "Problem Statement Assistant"
-  short_description: "Analyze any PS, research technical approaches, draft proposals & applications"
-  default_prompt: "Analyze this problem statement first and save its requirements and explanation."
