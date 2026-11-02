@@ -1,0 +1,12 @@
+{
+  "name": "gdocs",
+  "displayName": "Google Docs",
+  "version": "0.0.8",
+  "description": "Read, draft, and edit docs.",
+  "logo": "https://www.gstatic.com/images/branding/productlogos/docs_2026/v2/web/192px.svg",
+  "suggestedPrompts": [
+    "Summarize this design doc and list the open questions",
+    "Draft a launch announcement in a new doc from my notes",
+    "Reply to the open comments on my doc and resolve them"
+  ]
+}
